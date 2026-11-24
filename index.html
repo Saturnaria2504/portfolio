@@ -1,0 +1,735 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="nl" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alissia Reemeijer</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,ital,wght@9..40,0,300;9..40,0,400;9..40,0,500;9..40,1,300&family=Instrument+Sans:wght@500;600;700&display=swap">
+  <style>
+    /* ── Tokens ───────────────────────────────────────────────── */
+    :root {
+      --bg:      #f0efe9;
+      --fg:      #0f0f0d;
+      --muted:   #6b6b63;
+      --subtle:  #c0bfb7;
+      --accent:  #3d5225;
+      --accent-l:#8ab356;
+      --line:    rgba(15,15,13,.08);
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0d0d0b; --fg: #eae9e3; --muted: #6b6b63;
+        --subtle: #2e2e28; --accent: #8ab356; --accent-l: #b5d97a;
+        --line: rgba(234,233,227,.07); color-scheme: dark;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #0d0d0b; --fg: #eae9e3; --muted: #6b6b63;
+      --subtle: #2e2e28; --accent: #8ab356; --accent-l: #b5d97a;
+      --line: rgba(234,233,227,.07); color-scheme: dark;
+    }
+
+    /* ── Reset ────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      cursor: none;
+      overflow-x: hidden;
+      transition: background .4s, color .4s;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Cursor ───────────────────────────────────────────────── */
+    #cur-dot {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: width .15s, height .15s, background .3s;
+    }
+    #cur-ring {
+      position: fixed; width: 40px; height: 40px;
+      border: 1px solid var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      opacity: .4;
+      transition: width .3s cubic-bezier(.25,.46,.45,.94),
+                  height .3s cubic-bezier(.25,.46,.45,.94),
+                  opacity .3s, border-color .3s;
+    }
+    body.cursor-hover #cur-dot { width: 5px; height: 5px; }
+    body.cursor-hover #cur-ring { width: 56px; height: 56px; opacity: .2; }
+    @media (hover: none) { #cur-dot, #cur-ring { display: none; } body { cursor: auto; } }
+
+    /* ── Nav ──────────────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 1.5rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-logo {
+      font-family: 'Instrument Sans', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      color: var(--fg); cursor: none; letter-spacing: .01em;
+    }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 12px; color: var(--muted); letter-spacing: .05em;
+      text-transform: uppercase; cursor: none; transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--fg); }
+
+    /* theme toggle — just an icon */
+    #theme-btn {
+      background: none; border: none; padding: 0;
+      cursor: none; color: var(--muted); font-size: 15px;
+      transition: color .2s; line-height: 1;
+    }
+    #theme-btn:hover { color: var(--fg); }
+
+    /* ── HERO ─────────────────────────────────────────────────── */
+    #home {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 7rem 2.5rem 4rem;
+      position: relative;
+    }
+
+    .hero-inner { width: 100%; max-width: 1200px; position: relative; }
+
+    /* Giant rotated label */
+    .hero-label {
+      position: absolute;
+      top: 0; right: 0;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: .15em; text-transform: uppercase;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      opacity: 0;
+      transition: opacity .6s .8s;
+    }
+    .hero-label.in { opacity: 1; }
+
+    /* Name: huge, fills width */
+    .hero-name {
+      font-family: 'Instrument Sans', sans-serif;
+      font-weight: 700;
+      font-size: clamp(3.5rem, 11vw, 10.5rem);
+      line-height: .92;
+      letter-spacing: -.03em;
+      overflow: hidden;
+      margin-bottom: .15em;
+    }
+    .hero-name .line { overflow: hidden; display: block; }
+    .hero-name .word {
+      display: inline-block;
+      transform: translateY(110%);
+      transition: transform 1s cubic-bezier(.16,1,.3,1);
+    }
+    .hero-name .word.in { transform: translateY(0); }
+
+    /* Tagline row: italic text + big accent dot */
+    .hero-tag {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-top: 1.5rem;
+      overflow: hidden;
+    }
+    .hero-tag-text {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--muted); font-weight: 300; font-style: italic;
+      transform: translateY(40px); opacity: 0;
+      transition: transform .8s .5s cubic-bezier(.16,1,.3,1), opacity .8s .5s;
+    }
+    .hero-tag-text.in { transform: translateY(0); opacity: 1; }
+    .hero-dot {
+      width: clamp(10px,1.5vw,16px); height: clamp(10px,1.5vw,16px);
+      background: var(--accent); border-radius: 50%; flex-shrink: 0;
+      transform: scale(0); opacity: 0;
+      transition: transform .6s .7s cubic-bezier(.34,1.56,.64,1), opacity .4s .7s;
+    }
+    .hero-dot.in { transform: scale(1); opacity: 1; }
+
+    /* Scroll hint */
+    .hero-scroll {
+      position: absolute; bottom: -2rem; left: 0;
+      font-size: 11px; color: var(--subtle);
+      letter-spacing: .1em; text-transform: uppercase;
+      display: flex; align-items: center; gap: .75rem;
+      opacity: 0; transition: opacity .6s 1.2s;
+    }
+    .hero-scroll.in { opacity: 1; }
+    .hero-scroll::before {
+      content: ''; width: 32px; height: 1px; background: var(--subtle);
+      animation: slideLine 2.5s ease-in-out infinite;
+    }
+    @keyframes slideLine {
+      0%,100% { transform: scaleX(1); transform-origin: left; }
+      50% { transform: scaleX(.4); transform-origin: left; }
+    }
+
+    /* Magnetic CTA */
+    .hero-cta-wrap {
+      position: absolute; bottom: -2rem; right: 0;
+      opacity: 0; transition: opacity .6s 1s;
+    }
+    .hero-cta-wrap.in { opacity: 1; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: .6rem;
+      border: 1px solid var(--line); border-radius: 999px;
+      padding: .6em 1.4em; font-size: 13px; color: var(--muted);
+      cursor: none; transition: color .25s, border-color .25s, transform .4s cubic-bezier(.16,1,.3,1);
+      will-change: transform;
+    }
+    .hero-cta:hover { color: var(--fg); border-color: var(--muted); }
+    .hero-cta svg { width: 14px; height: 14px; transition: transform .3s; }
+    .hero-cta:hover svg { transform: translate(2px,-2px); }
+
+    /* ── MARQUEE divider ──────────────────────────────────────── */
+    .marquee-wrap {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 1rem 0; overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex; gap: 0;
+      animation: marquee 18s linear infinite;
+    }
+    .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-item {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 700; letter-spacing: -.01em;
+      padding: 0 2.5rem; color: var(--subtle);
+      transition: color .2s;
+    }
+    .marquee-item.accent { color: var(--accent); }
+
+    /* ── OVER ─────────────────────────────────────────────────── */
+    #over {
+      padding: 10rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 6rem;
+      align-items: start;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .over-label {
+      font-size: 11px; color: var(--muted);
+      letter-spacing: .12em; text-transform: uppercase;
+      position: sticky; top: 8rem;
+    }
+    .over-label span {
+      display: block; font-size: 4rem; font-family: 'Instrument Sans', sans-serif;
+      font-weight: 700; color: var(--fg); letter-spacing: -.03em;
+      line-height: 1; margin-bottom: .5rem;
+    }
+
+    .over-content {}
+    .over-big {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.5rem);
+      font-weight: 700; line-height: 1.2; letter-spacing: -.02em;
+      margin-bottom: 2rem;
+    }
+    .over-big em { color: var(--accent); font-style: normal; }
+
+    .over-text {
+      font-size: 1rem; color: var(--muted); font-weight: 300;
+      line-height: 1.85; max-width: 480px;
+    }
+    .over-text p + p { margin-top: 1.2rem; }
+    .over-text strong { color: var(--fg); font-weight: 500; }
+
+    /* Skill pills */
+    .skill-pills {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      margin-top: 2.5rem;
+    }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px; padding: .35em 1em;
+      font-size: 12px; color: var(--muted);
+      letter-spacing: .04em;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--accent); }
+    .pill.learning {
+      border-color: transparent;
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      color: var(--accent);
+    }
+
+    /* ── PROJECTEN ────────────────────────────────────────────── */
+    #projecten {
+      padding: 0 2.5rem 10rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .proj-header {
+      display: flex; justify-content: space-between; align-items: baseline;
+      border-top: 1px solid var(--line);
+      padding-top: 1.5rem; margin-bottom: 5rem;
+    }
+    .proj-header-title {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 11px; font-weight: 500;
+      letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+    }
+    .proj-header-count { font-size: 11px; color: var(--subtle); letter-spacing: .06em; }
+
+    /* Project cards — big horizontal tiles */
+    .proj-grid { display: flex; flex-direction: column; gap: 0; }
+
+    .proj-tile {
+      display: grid;
+      grid-template-columns: 5rem 1fr auto;
+      align-items: start;
+      gap: 2.5rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--line);
+      cursor: none;
+      transition: padding-left .5s cubic-bezier(.16,1,.3,1);
+      position: relative;
+    }
+    .proj-tile::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 6%, transparent), transparent);
+      opacity: 0; transition: opacity .4s; pointer-events: none;
+    }
+    .proj-tile:hover { padding-left: 1.5rem; }
+    .proj-tile:hover::before { opacity: 1; }
+    .proj-tile.dimmed { opacity: .4; }
+    .proj-tile.dimmed:hover { opacity: .6; }
+
+    .proj-index {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700; letter-spacing: -.03em;
+      color: var(--subtle); line-height: 1;
+      transition: color .3s;
+    }
+    .proj-tile:hover .proj-index { color: var(--accent); }
+
+    .proj-body { min-width: 0; }
+    .proj-name {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      font-weight: 700; letter-spacing: -.02em; line-height: 1.1;
+      color: var(--fg); transition: color .25s;
+    }
+    .proj-tile:hover .proj-name { color: var(--accent); }
+    .proj-meta {
+      display: flex; gap: .6rem; flex-wrap: wrap;
+      margin-top: .6rem;
+    }
+    .proj-tag {
+      font-size: 11px; color: var(--subtle);
+      letter-spacing: .06em; text-transform: uppercase;
+    }
+    .proj-tag + .proj-tag::before { content: '·'; margin-right: .6rem; }
+    .proj-desc {
+      font-size: .9rem; color: var(--muted); font-weight: 300;
+      line-height: 1.7; margin-top: .5rem; max-width: 480px;
+    }
+
+    .proj-action { flex-shrink: 0; display: flex; align-items: flex-start; padding-top: .2rem; }
+    .proj-link {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: 12px; color: var(--muted); cursor: none;
+      transition: color .2s; white-space: nowrap;
+    }
+    .proj-link svg { width: 14px; height: 14px; transition: transform .3s cubic-bezier(.16,1,.3,1); }
+    .proj-tile:hover .proj-link { color: var(--accent); }
+    .proj-tile:hover .proj-link svg { transform: translate(3px,-3px); }
+    .proj-soon {
+      font-size: 11px; color: var(--subtle);
+      letter-spacing: .08em; text-transform: uppercase;
+      border: 1px solid var(--line); padding: .3em .8em; border-radius: 2px;
+    }
+
+    /* ── CONTACT ──────────────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--line);
+      padding: 8rem 2.5rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .contact-label {
+      font-size: 11px; color: var(--muted);
+      letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: 3rem;
+    }
+
+    /* Big scramble text */
+    .contact-big {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: clamp(2.5rem, 7vw, 6rem);
+      font-weight: 700; line-height: 1.0;
+      letter-spacing: -.03em; margin-bottom: 3rem;
+    }
+    .contact-big .line { overflow: hidden; display: block; }
+    .contact-big .word {
+      display: inline-block;
+    }
+    .contact-big a {
+      color: var(--accent); cursor: none;
+      border-bottom: 2px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      transition: border-color .25s;
+    }
+    .contact-big a:hover { border-color: var(--accent); }
+
+    .contact-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .contact-link {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: 13px; color: var(--muted); cursor: none;
+      transition: color .2s; letter-spacing: .03em;
+    }
+    .contact-link:hover { color: var(--fg); }
+    .contact-link svg { width: 15px; height: 15px; }
+
+    /* ── FOOTER ───────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 1.5rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; color: var(--subtle); letter-spacing: .04em;
+    }
+
+    /* ── Scroll reveal ────────────────────────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1);
+    }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 1.25rem 1.25rem; }
+      #home { padding: 6rem 1.25rem 5rem; }
+      #over { grid-template-columns: 1fr; gap: 3rem; padding: 6rem 1.25rem; }
+      .over-label { position: static; }
+      .over-label span { font-size: 2.5rem; }
+      #projecten { padding: 0 1.25rem 6rem; }
+      .proj-tile { grid-template-columns: 3.5rem 1fr; }
+      .proj-action { display: none; }
+      #contact { padding: 5rem 1.25rem; }
+      footer { flex-direction: column; gap: .4rem; text-align: center; }
+      .nav-links { display: none; }
+      .hero-scroll { display: none; }
+      .hero-cta-wrap { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero-name .word, .contact-big .word { transform: none; transition: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+
+  <!-- Nav -->
+  <nav>
+    <span class="nav-logo">Alissia Reemeijer</span>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#over">Over</a></li>
+        <li><a href="#projecten">Projecten</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button id="theme-btn" aria-label="Thema wisselen">○</button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="home">
+    <div class="hero-inner">
+
+      <div class="hero-label">Frontend Developer — Dordrecht</div>
+
+      <h1 class="hero-name" aria-label="Alissia Reemeijer">
+        <span class="line"><span class="word">Alissia</span></span>
+        <span class="line"><span class="word">Reemeijer</span></span>
+      </h1>
+
+      <div class="hero-tag">
+        <span class="hero-dot"></span>
+        <span class="hero-tag-text">Ik bouw interfaces die er niet alleen goed uitzien, maar ook echt aanvoelen.</span>
+      </div>
+
+      <span class="hero-scroll">Scroll</span>
+
+      <div class="hero-cta-wrap">
+        <a href="#contact" class="hero-cta">
+          Beschikbaar voor werk
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 12 2M5 2h7v7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Marquee -->
+  <div class="marquee-wrap">
+    <div class="marquee-track" aria-hidden="true">
+      <span class="marquee-item">HTML</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">CSS</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">JavaScript</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Responsive Design</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">React</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Figma</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Git</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">HTML</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">CSS</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">JavaScript</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Responsive Design</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">React</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Figma</span>
+      <span class="marquee-item accent">·</span>
+      <span class="marquee-item">Git</span>
+      <span class="marquee-item accent">·</span>
+    </div>
+  </div>
+
+  <!-- Over -->
+  <section id="over">
+    <div class="over-label reveal">
+      <span>01</span>
+      Over mij
+    </div>
+    <div class="over-content">
+      <h2 class="over-big reveal">
+        Junior developer met een <em>scherp oog</em> voor detail.
+      </h2>
+      <div class="over-text reveal">
+        <p>
+          Ik heb een <strong>WO Bachelor Informatica</strong> en zoek mijn eerste stap
+          als junior frontend developer — het liefst bij een klein bureau waar websites
+          voor ondernemers écht het verschil maken.
+        </p>
+        <p>
+          Ik werk op de grens van design en code. Een knop die precies goed aanvoelt,
+          een pagina die vlot werkt op elk scherm, een animatie die versterkt in plaats
+          van afleidt.
+        </p>
+        <p>Beschikbaar voor een <strong>vaste baan</strong> in de regio Rotterdam–Dordrecht.</p>
+      </div>
+      <div class="skill-pills reveal">
+        <span class="pill">HTML & CSS</span>
+        <span class="pill">JavaScript</span>
+        <span class="pill">Responsive design</span>
+        <span class="pill">Git & GitHub</span>
+        <span class="pill">WordPress</span>
+        <span class="pill learning">React →</span>
+        <span class="pill learning">Figma →</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projecten -->
+  <section id="projecten">
+    <div class="proj-header reveal">
+      <span class="proj-header-title">Projecten</span>
+      <span class="proj-header-count">04</span>
+    </div>
+    <div class="proj-grid">
+
+      <div class="proj-tile reveal" data-href="https://mariannes-schildersatelier.nl">
+        <div class="proj-index">01</div>
+        <div class="proj-body">
+          <div class="proj-name">Marianne's Schildersatelier</div>
+          <div class="proj-meta">
+            <span class="proj-tag">HTML</span>
+            <span class="proj-tag">CSS</span>
+            <span class="proj-tag">JavaScript</span>
+            <span class="proj-tag">Live</span>
+          </div>
+          <div class="proj-desc">Website voor een schildersatelier in Dordrecht — galerij, cursusoverzicht en workshopaanmelding.</div>
+        </div>
+        <div class="proj-action">
+          <a href="https://mariannes-schildersatelier.nl" target="_blank" class="proj-link">
+            Bekijk
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12 12 2M5 2h7v7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="proj-tile dimmed reveal">
+        <div class="proj-index">02</div>
+        <div class="proj-body">
+          <div class="proj-name">Herontwerp horecawebsite</div>
+          <div class="proj-meta">
+            <span class="proj-tag">HTML</span>
+            <span class="proj-tag">CSS</span>
+            <span class="proj-tag">Figma</span>
+          </div>
+          <div class="proj-desc">Frisse UI over een bestaande horecasite — betere navigatie, duidelijker menu, sneller op mobiel.</div>
+        </div>
+        <div class="proj-action"><span class="proj-soon">Binnenkort</span></div>
+      </div>
+
+      <div class="proj-tile dimmed reveal">
+        <div class="proj-index">03</div>
+        <div class="proj-body">
+          <div class="proj-name">UI Component library</div>
+          <div class="proj-meta">
+            <span class="proj-tag">HTML</span>
+            <span class="proj-tag">CSS</span>
+            <span class="proj-tag">JavaScript</span>
+          </div>
+          <div class="proj-desc">Een set herbruikbare componenten: knoppen, kaarten, formulieren, navigatie.</div>
+        </div>
+        <div class="proj-action"><span class="proj-soon">Binnenkort</span></div>
+      </div>
+
+      <div class="proj-tile dimmed reveal">
+        <div class="proj-index">04</div>
+        <div class="proj-body">
+          <div class="proj-name">Interactieve web-app</div>
+          <div class="proj-meta">
+            <span class="proj-tag">React</span>
+            <span class="proj-tag">JavaScript</span>
+            <span class="proj-tag">API</span>
+          </div>
+          <div class="proj-desc">Een kleine app die met een externe API werkt — zoeken, filteren, live data tonen.</div>
+        </div>
+        <div class="proj-action"><span class="proj-soon">Binnenkort</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="contact-label reveal">03 — Contact</div>
+    <div class="contact-big">
+      <span class="line"><span class="word">Stuur een mail</span></span>
+      <span class="line">
+        <span class="word">naar&nbsp;</span><span class="word"><a href="mailto:alissia@example.com">alissia@example.com</a></span>
+      </span>
+      <!-- ↑ Vervang door je echte emailadres -->
+    </div>
+    <div class="contact-links reveal">
+      <a href="https://github.com/Saturnaria2504" target="_blank" class="contact-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="https://linkedin.com/in/alissiareemeijer" target="_blank" class="contact-link">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Alissia Reemeijer</span>
+    <span>Saturnaria2504.github.io</span>
+  </footer>
+
+  <script>
+    // ── Custom cursor ──────────────────────────────────────────
+    const dot = document.getElementById('cur-dot');
+    const ring = document.getElementById('cur-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+    });
+    (function loop() {
+      rx += (mx - rx) * .1; ry += (my - ry) * .1;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(loop);
+    })();
+    document.querySelectorAll('a, button, .proj-tile').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+
+    // ── Theme toggle ───────────────────────────────────────────
+    const root = document.documentElement;
+    const themeBtn = document.getElementById('theme-btn');
+    function applyTheme(t) {
+      root.setAttribute('data-theme', t);
+      themeBtn.textContent = t === 'dark' ? '●' : '○';
+      themeBtn.title = t === 'dark' ? 'Lichtmodus' : 'Donkermodus';
+      try { localStorage.setItem('theme', t); } catch(e) {}
+    }
+    let saved; try { saved = localStorage.getItem('theme'); } catch(e) {}
+    applyTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    themeBtn.addEventListener('click', () =>
+      applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark')
+    );
+
+    // ── Hero entrance ──────────────────────────────────────────
+    window.addEventListener('load', () => {
+      document.querySelectorAll('.hero-name .word').forEach((w, i) => {
+        setTimeout(() => w.classList.add('in'), 100 + i * 180);
+      });
+      setTimeout(() => document.querySelector('.hero-tag-text').classList.add('in'), 500);
+      setTimeout(() => document.querySelector('.hero-dot').classList.add('in'), 600);
+      setTimeout(() => document.querySelector('.hero-scroll').classList.add('in'), 900);
+      setTimeout(() => document.querySelector('.hero-cta-wrap').classList.add('in'), 800);
+      setTimeout(() => document.querySelector('.hero-label').classList.add('in'), 700);
+    });
+
+    // ── Scroll reveal ──────────────────────────────────────────
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        // stagger children if it's a grid parent
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      });
+    }, { threshold: 0.07 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // ── Magnetic CTA ───────────────────────────────────────────
+    const cta = document.querySelector('.hero-cta');
+    if (cta) {
+      cta.addEventListener('mousemove', e => {
+        const r = cta.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        cta.style.transform = `translate(${x * .22}px, ${y * .22}px)`;
+      });
+      cta.addEventListener('mouseleave', () => { cta.style.transform = ''; });
+    }
+
+    // ── Project tiles: click to open ──────────────────────────
+    document.querySelectorAll('.proj-tile[data-href]').forEach(el => {
+      el.addEventListener('click', () => window.open(el.dataset.href, '_blank'));
+    });
+  </script>
+</body>
+</html>
+
+</body></html>
